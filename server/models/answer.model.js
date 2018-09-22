@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Question = require('./question.model')
 
 const answerSchema = new Schema({
     article: {
@@ -24,25 +25,32 @@ const answerSchema = new Schema({
 });
 
 answerSchema.pre('save', function (next) {
-    // do stuff
-    next();
-});
+    Question.updateOne(
+        {$push: {answers: this._id}}
+    )
+    .then(() => {
+        next()
+    })
+    .catch(err => console.log(err))
+})
 
 answerSchema.pre('update', function () {
     this.update({}, {
         $set: {
             updatedAt: new Date()
         }
-    });
-});
+    })
+})
 
 answerSchema.pre('remove', function () {
-    this.update({}, {
-        $set: {
-            updatedAt: new Date()
-        }
-    });
-});
+    Question.updateOne(
+        {$pull: {answers: this._id}}
+    )
+    .then(() => {
+        next()
+    })
+    .catch(err => console.log(err))
+})
 
 const Question = mongoose.model('Question', answerSchema);
 module.exports = Question
