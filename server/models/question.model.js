@@ -1,45 +1,63 @@
-const hash = require('bycjwt')
-const sgMail = require('@sendgrid/mail')
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose  = require('mongoose')
+const Schema    = mongoose.Schema
+const User      = require('./user.model')
 
-const userSchema = new Schema({ 
-    name: String,
-    email: {
-        type: String,
-        unique : true,
-        required: [true, 'Please input email'],
+const questionSchema = new Schema({
+    title: String,
+    description: String,
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
-    password: { 
-        type: String, 
-        required: [true, 'Password is required'], 
-        validate: {
-            validator: function(v) {
-                if(v.length < 6) return false
-            }
+    tags: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Tag'
+    }],
+    answers: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Answer'
+    }],
+    votes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    unvotes: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+}, {
+    timestamps: true
+})
+
+questionSchema.pre('save', function (next) {
+    User.updateOne(
+        {$push: {questions: this._id}}
+    )
+    .then(() => {
+        next()
+    })
+    .catch(err => console.log(err))
+})
+
+questionSchema.pre('update', function () {
+    this.update({}, {
+        $set: {
+            updatedAt: new Date()
         }
-    },
-    role: { type: String, default: 'member' },
-    deleteAt: { type: Date, default: null},    
-}, { timestamps:true });
+    })
+})
 
-userSchema.post('validate', function() {
-    this.password = hash.bcencode(this.password)
-});
+questionSchema.pre('remove', function () {
+    User.updateOne(
+        {$pull: {questions: this._id}}
+    )
+    .then(() => {
+        next()
+    })
+    .catch(err => console.log(err))
+})
 
-userSchema.post('save', function() {
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
-    const msg = {
-        to: this.email,
-        from: 'talkasrul@gmail.com',
-        subject: 'Thank For Register',
-        text: 'Thanks for register',
-        html: '<strong>Thanks for register</strong>',
-    }
-    sgMail.send(msg)
-});
-
-const User = mongoose.model('User', userSchema);
-module.exports = User
+const Question = mongoose.model('Question', questionSchema)
+module.exports = Question
 
 // By Asrul Harahap - 2018

@@ -1,5 +1,6 @@
 const User = require('../models/user.model')
 const hash = require('bycjwt')
+// {getUserLogin, signin, signup, updateUser}
 
 module.exports      = {
 
