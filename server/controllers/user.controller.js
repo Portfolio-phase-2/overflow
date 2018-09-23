@@ -1,6 +1,5 @@
 const User = require('../models/user.model')
 const hash = require('bycjwt')
-// {getUserLogin, signin, signup, updateUser}
 
 module.exports      = {
 
@@ -10,9 +9,8 @@ module.exports      = {
             email   : req.body.email,
             password: req.body.password
         }
-        let user = new User(objUser)
-        user.save()
-        .then( response => res.status(201).json({response}))
+        User.create(objUser)
+        .then( response => res.status(201).json(response))
         .catch( err => {
             res.status(500).json(err)
         })
@@ -29,7 +27,7 @@ module.exports      = {
                     err:false,
                     name: user.name,
                     token:hash.jwtencode({
-                        id: user._id,
+                        _id: user._id,
                         name: user.name,
                         email: user.email,
                         role: user.role
@@ -45,9 +43,26 @@ module.exports      = {
     },
 
     getOne: (req, res) => {
-        User.findById({_id: req.decoded.id})
-        .then( response => res.status(200).json(response))
+        User.findById({_id: req.decoded._id})
+        .then( response => {
+            let user = {
+                name: response.name,
+                _id: response._id,
+                email: response.email,
+                questions: response.questions,
+                role: response.role
+            }
+            res.status(200).json(user)
+        })
         .catch( err => res.status(500).json(err))
+    }, 
+
+    getAll: (req, res) => {
+        User.find({}, function(err, result){
+            if(!err) {
+                res.status(200).json(result)
+            }
+        })
     }
 }
 // By Asrul Harahap - 2018

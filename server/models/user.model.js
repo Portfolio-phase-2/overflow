@@ -3,50 +3,39 @@ const sgMail = require('@sendgrid/mail')
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
+const userSchema = new Schema({ 
     name: String,
     email: {
         type: String,
-        unique: true,
+        unique : true,
         required: [true, 'Please input email'],
     },
-    password: {
-        type: String,
-        required: [true, 'Password is required'],
+    password: { 
+        type: String, 
+        required: [true, 'Password is required'], 
         validate: {
-            validator: function (v) {
-                if (v.length < 6) return false
+            validator: function(v) {
+                if(v.length <= 6) return false
             }
         }
     },
-    questions: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Question'
-    }],
-    role: {
-        type: String,
-        default: 'member'
-    },
-    deleteAt: {
-        type: Date,
-        default: null
-    },
-}, {
-    timestamps: true
-});
+    questions: [{ type: Schema.Types.ObjectId, ref: 'Question' }],
+    role: { type: String, default: 'member' },
+    deleteAt: { type: Date, default: null},    
+}, { timestamps:true });
 
-userSchema.post('validate', function () {
+userSchema.post('validate', function() {
     this.password = hash.bcencode(this.password)
 });
 
-userSchema.post('save', function () {
+userSchema.post('save', function() {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY)
     const msg = {
         to: this.email,
         from: 'talkasrul@gmail.com',
-        subject: 'Thank For Register',
+        subject: 'Success register',
         text: 'Thanks for register',
-        html: '<strong>Thanks for register</strong>',
+        html: '<p>Thanks for register in <strong>tulisanKu</strong></p>',
     }
     sgMail.send(msg)
 });

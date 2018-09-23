@@ -1,58 +1,39 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
 const Question = require('./question.model')
+const Schema = mongoose.Schema
 
-const answerSchema = new Schema({
-    article: {
-        type: Schema.Types.ObjectId,
-        ref: 'Article'
-    },
-    content: String,
-    owner: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    votes: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    unvotes: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-}, {
-    timestamps: true
-});
+const answerSchema = new Schema({ 
+    answer: String,
+    question: { type: Schema.Types.ObjectId, ref: 'Question' },
+    owner: { type: Schema.Types.ObjectId, ref: 'User' },
+    vote: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    unvote: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    deleteAt: { type: Date, default: null},    
+}, { timestamps:true })
 
-answerSchema.pre('save', function (next) {
+answerSchema.pre('save', function(next) {
     Question.updateOne(
-        {$push: {answers: this._id}}
-    )
-    .then(() => {
+        {_id: this.question}, 
+        {$push: {answers: this._id}
+    })
+    .then( response => {
         next()
     })
-    .catch(err => console.log(err))
+    .catch( err => console.log(err))
 })
 
-answerSchema.pre('update', function () {
-    this.update({}, {
-        $set: {
-            updatedAt: new Date()
-        }
-    })
-})
-
-answerSchema.pre('remove', function () {
+answerSchema.pre('remove', function(next) {
     Question.updateOne(
-        {$pull: {answers: this._id}}
-    )
-    .then(() => {
+        {_id: this.question}, 
+        {$pull: {answers: this._id}
+    })
+    .then( response => {
         next()
     })
-    .catch(err => console.log(err))
+    .catch( err => console.log(err))
 })
 
-const Question = mongoose.model('Question', answerSchema);
-module.exports = Question
+const Answer = mongoose.model('Answer', answerSchema)
+module.exports = Answer
 
 // By Asrul Harahap - 2018

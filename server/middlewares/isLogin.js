@@ -1,12 +1,12 @@
-const hash = require('../helpers/hashHelper')
-const User = require('../models/User')
+const hash = require('bycjwt')
+const User = require('../models/user.model')
 
 module.exports = (req, res, next) => {
     token = req.headers.token
     if(token) {
         let verify = hash.jwtdecode(token)
         User
-        .findOne({_id:verify.id})
+        .findOne({_id:verify._id})
         .then( response => {
             if(response) {
                 req.decoded = verify

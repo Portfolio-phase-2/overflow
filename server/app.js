@@ -27,6 +27,7 @@ app.use(express.urlencoded({ extended: false }))
 const indexRouter = require('./routes/index')
 
 app.use('/', indexRouter)
-app.listen(port, () => console.log(`listening on port ${port}`))
+app.listen(port, () => console.log(`Listening on port ${port} and db ${database}`))
+
 module.exports = app
 // By Asrul Harahap - 2018
