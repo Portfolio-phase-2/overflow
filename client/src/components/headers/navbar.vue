@@ -36,6 +36,12 @@
               <input type="email" class="form-control mb-3" placeholder="Email" v-model="email" autofocus required>
               <input type="password" class="form-control mb-3" placeholder="Password" v-model="password" required>
               <button type="button" class="btn btn-outline-primary btn-block mb-3" data-dismiss="modal" @click="doLogin">Sign In</button>
+              <fb-signin-button
+                :params="fbSignInParams"
+                @success="onSignInSuccess"
+                @error="onSignInError">
+                Sign in with Facebook
+              </fb-signin-button>
               I dont have an account, I want <a href="#" data-dismiss="modal" data-toggle="modal" data-target="#modalSignUp">Sign Up</a>
             </div>
           </div>
@@ -89,7 +95,11 @@ export default {
       search: '',
       name: '',
       email: '',
-      password: ''
+      password: '',
+      fbSignInParams: {
+        scope: 'email,user_likes',
+        return_scopes: true
+      }
     }
   },
   computed: {
@@ -108,7 +118,16 @@ export default {
     doLogout () {
       localStorage.removeItem('token')
       this.destroyLogin()
+    },
+    onSignInSuccess (response) {
+      // FB.api('/me', dude => {
+      //   console.log(`Good to see you, ${dude.name}.`)
+      // })
+    },
+    onSignInError (error) {
+      console.log('OH NOES', error)
     }
+
   },
   watch: {
   }
@@ -116,5 +135,12 @@ export default {
 </script>
 
 <style>
-
+.fb-signin-button {
+  /* This is where you control how the button looks. Be creative! */
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background-color: #4267b2;
+  color: #fff;
+}
 </style>

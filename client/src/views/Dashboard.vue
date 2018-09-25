@@ -1,14 +1,12 @@
 <template>
-  <div class="card">
-    <ListQuestion></ListQuestion>
+  <div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import ListQuestion from '@/components/contains/Listquestion.vue'
 export default {
-  name: 'dashboard',
-  components: { ListQuestion }
+  name: 'dashboard'
 }
 </script>
 

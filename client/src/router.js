@@ -10,7 +10,19 @@ export default new Router({
     {
       path: '/',
       name: 'dashboard',
-      component: () => import('./views/Dashboard.vue')
+      component: () => import('./views/Dashboard.vue'),
+      children: [
+        {
+          path: '/',
+          component: () => import('./components/contains/Listquestion.vue')
+        },
+        {
+          path: '/:id',
+          name: 'detailquestion',
+          props: true,
+          component: () => import('./components/contains/Detail.vue')
+        }
+      ]
     }
   ]
 })

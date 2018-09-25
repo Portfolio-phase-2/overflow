@@ -9,7 +9,8 @@ export default new Vuex.Store({
   state: {
     isLogin: false,
     user: {},
-    questions: []
+    questions: [],
+    categories: []
   },
   mutations: {
     changeIsLoginAndMakeToken (state, payload) {
@@ -20,6 +21,9 @@ export default new Vuex.Store({
     },
     setQuestions (state, payload) {
       state.questions = payload
+    },
+    setcategories (state, payload) {
+      state.categories = payload
     }
   },
   actions: {
@@ -63,6 +67,22 @@ export default new Vuex.Store({
     destroyLogin ({ commit }) {
       commit('changeIsLoginAndMakeToken', false)
     },
+    addQuestion ({ commit, dispatch }, payload) {
+      axios({
+        url: url + `/questions`,
+        method: 'post',
+        data: {
+          title: payload.title,
+          description: payload.description,
+          category: payload.category
+        },
+        headers: { token: localStorage.getItem('token') }
+      })
+        .then(() => {
+          dispatch('getQuestions')
+        })
+        .catch(() => console.log(`Failed add new question`))
+    },
     getQuestions ({ commit }, payload) {
       if (payload === undefined) {
         axios({
@@ -74,6 +94,26 @@ export default new Vuex.Store({
           })
           .catch(() => console.log(`Failed to get data`))
       }
+    },
+    addCategory ({ commit }, payload) {
+      axios({
+        url: url + `/categories`,
+        method: 'post',
+        data: { name: payload },
+        headers: { token: localStorage.getItem('token') }
+      })
+        .then(() => console.log(`Success add new category`))
+        .catch(() => console.log(`Failed add new category`))
+    },
+    getCategories ({ commit }) {
+      axios({
+        url: url + `/categories`,
+        method: 'get'
+      })
+        .then((found) => {
+          commit('setcategories', found.data)
+        })
+        .catch(() => console.log(`Failed add new category`))
     }
   }
 })

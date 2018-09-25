@@ -9,14 +9,15 @@ module.exports = {
             owner: req.decoded._id,
             category: req.body.category
         }
-        let Question = new Question(newQuestion)
-        Question.save()
+        let question = new Question(newQuestion)
+        question.save()
         .then( response => res.status(201).json(response))
         .catch( err => res.status(500).json(err))
     },
 
     getAll: (req, res) => {
         Question.find({})
+        .sort([['updatedAt', 'descending']])
         .populate('owner')
         .populate('category')
         .populate({ 
@@ -29,6 +30,7 @@ module.exports = {
 
     getAllMine: (req, res) => {
         Question.find({owner: req.decoded._id})
+        .sort([['updatedAt', 'descending']])
         .populate('owner')
         .populate('category')
         .populate({ 

@@ -4,10 +4,12 @@
     <div class="container">
       <div class="row">
         <div class="col-md-3">
-          <Popular></Popular>
+          <Popular class="mb-3"></Popular>
+          <Management class="mb-3" v-if="user.name"></Management>
+          <Category class="mb-3"></Category>
         </div>
         <div class="col-md-9">
-          <router-view/>
+          <Dashboard></Dashboard>
         </div>
       </div>
     </div>
@@ -18,9 +20,12 @@
 import { mapState, mapActions } from 'vuex'
 import Navbar from '@/components/headers/navbar.vue'
 import Popular from '@/components/contains/Popular.vue'
+import Management from '@/components/contains/Management.vue'
+import Dashboard from '@/views/Dashboard.vue'
+import Category from '@/components/contains/Category.vue'
 export default {
   components: {
-    Navbar, Popular
+    Navbar, Popular, Management, Category, Dashboard
   },
   computed: {
     ...mapState(['isLogin', 'user'])
@@ -29,9 +34,10 @@ export default {
     this.userSigninCheck()
     this.failedToken()
     this.getQuestion()
+    this.getCategories()
   },
   methods: {
-    ...mapActions(['loginIn', 'cekUserLogin', 'destroyLogin', 'getQuestions']),
+    ...mapActions(['loginIn', 'cekUserLogin', 'destroyLogin', 'getQuestions', 'getCategories']),
     userSigninCheck () {
       let token = localStorage.getItem('token')
       if (token) {
