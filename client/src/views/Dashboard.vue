@@ -1,14 +1,14 @@
 <template>
-  <div>
-    <Navbar></Navbar>
+  <div class="card">
+    <ListQuestion></ListQuestion>
   </div>
 </template>
 
 <script>
-import Navbar from '@/components/headers/navbar.vue'
+import ListQuestion from '@/components/contains/Listquestion.vue'
 export default {
   name: 'dashboard',
-  components: { Navbar }
+  components: { ListQuestion }
 }
 </script>
 
