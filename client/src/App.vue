@@ -4,9 +4,9 @@
     <div class="container">
       <div class="row">
         <div class="col-md-3">
-          <Popular class="mb-3"></Popular>
           <Management class="mb-3" v-if="user.name"></Management>
           <Category class="mb-3"></Category>
+          <Popular class="mb-3"></Popular>
         </div>
         <div class="col-md-9">
           <Dashboard></Dashboard>

@@ -109,10 +109,11 @@ export default new Vuex.Store({
           commit('setUser', found.data)
           commit('changeIsLoginAndMakeToken', true)
         })
-        .catch(() => { console.log(`failed`) })
+        .catch(() => { commit('setUser', {}) })
     },
-    destroyLogin ({ commit }) {
+    destroyLogin ({ commit, dispatch }) {
       commit('changeIsLoginAndMakeToken', false)
+      dispatch('cekUserLogin')
     },
     addQuestion ({ commit, dispatch }, payload) {
       axios({

@@ -38,8 +38,8 @@
                   <th>No</th>
                   <th>Categories</th>
                 </tr>
-                <tr v-for="category in categories" :key="category._id">
-                  <td>?</td>
+                <tr v-for="(category, i) in categories" :key="category._id">
+                  <td>{{i+1}}</td>
                   <td>{{category.name}}</td>
                 </tr>
               </table>
