@@ -10,7 +10,8 @@ export default new Vuex.Store({
     isLogin: false,
     user: {},
     questions: [],
-    categories: []
+    categories: [],
+    question: {}
   },
   mutations: {
     changeIsLoginAndMakeToken (state, payload) {
@@ -24,9 +25,22 @@ export default new Vuex.Store({
     },
     setcategories (state, payload) {
       state.categories = payload
+    },
+    setQuestion (state, payload) {
+      state.question = payload
     }
   },
   actions: {
+    getQuestion ({ commit }, payload) {
+      axios({
+        url: `http://localhost:3000/questions/${payload}`,
+        method: 'get'
+      })
+        .then(found => {
+          commit('setQuestion', found.data)
+        })
+        .catch(err => console.log(err))
+    },
     loginIn ({ commit }, payload) {
       axios({
         url: url + `/users/signin`,
