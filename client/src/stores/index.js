@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-const url = 'http://localhost:3000'
+const url = 'https://apioverflow.padangjs.com'
 
 Vue.use(Vuex)
 

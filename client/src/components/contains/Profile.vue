@@ -1,1 +1,0 @@
-// di compute yg ingin berubah

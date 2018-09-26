@@ -60,7 +60,7 @@
 <script>
 import axios from 'axios'
 import { mapState, mapActions } from 'vuex'
-const url = 'http://localhost:3000'
+const url = 'https://apioverflow.padangjs.com'
 export default {
   props: ['id'],
   name: 'listquestion',

@@ -7,6 +7,8 @@ const isAdmin = require('../middlewares/isAdmin')
 router.post('/', isLogin, isAdmin, createOne)
 router.get('/', getAll)
 router.get('/:id', getById)
+router.put('/:id', putById)
+router.delete('/:id', deleteById)
 
 module.exports = router
 // By Asrul Harahap - 2018
