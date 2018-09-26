@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const {createOne, getAll, getAllMine, getById, putById, deleteById, upvote, downvote, searchQuestionByTitle} = require('../controllers/question.controller')
+const {createOne, getAll, getAllPop, getAllMine, getById, putById, deleteById, upvote, downvote, searchQuestionByTitle} = require('../controllers/question.controller')
 const isLogin = require('../middlewares/isLogin')
 
 router.post('/',isLogin, createOne)
 router.get('/', getAll)
+router.get('/pop', getAllPop)
 router.get('/mine', isLogin, getAllMine)
 router.get('/:id', getById)
 router.put('/:id', isLogin, putById)

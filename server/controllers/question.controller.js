@@ -28,6 +28,19 @@ module.exports = {
         .catch( err => res.status(500).json(err))
     },
 
+    getAllPop: (req, res) => {
+        Question.find({})
+        .sort([['answers', 'descending']])
+        .populate('owner')
+        .populate('category')
+        .populate({ 
+            path: 'answers',
+            populate: {path: 'owner'} 
+         })
+        .then( response => res.status(200).json(response))
+        .catch( err => res.status(500).json(err))
+    },
+
     getAllMine: (req, res) => {
         Question.find({owner: req.decoded._id})
         .sort([['updatedAt', 'descending']])

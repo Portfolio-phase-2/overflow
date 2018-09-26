@@ -8,6 +8,48 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>Overflow</title>
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '2124886324505838',
+          cookie     : true,
+          xfbml      : true,
+          version    : 'v3.1'
+        });
+          
+        FB.AppEvents.logPageView();   
+          
+      };
+    
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "https://connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+       function checkLoginState() {
+          FB.getLoginStatus(function(response) {
+              if(response.status == 'connected') {
+                  $.ajax({
+                      method: 'POST',
+                      url: 'http://localhost:3000/users/fb',
+                      data: {
+                          accessToken: response.authResponse.accessToken
+                      }
+                  })
+                  .done( function( result ) {
+                      localStorage.setItem('token', result.token)
+                      window.location = '/'
+                  })
+              }
+          });
+       }
+    </script>
   </head>
   <body>
     <noscript>
