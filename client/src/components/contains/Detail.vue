@@ -5,8 +5,8 @@
         <h4 class="pl-2 pr-2">{{question.title}}</h4>
       </div>
       <div class="card-body">
-        <button class="btn btn-sm btn-outline-success" v-if="user._id !== question.owner._id" @click="up(question._id)">{{question.vote.length}} Up </button>
-        <button class="btn btn-sm btn-outline-warning ml-1" v-if="user._id !== question.owner._id" @click="down(question._id)">{{question.unvote.length}} Down </button>
+        <button class="btn btn-sm btn-outline-success" v-if="user._id !== question.owner._id" @click="up(question._id)">{{question.vote.length}} <i class="far fa-thumbs-up"></i> </button>
+        <button class="btn btn-sm btn-outline-warning ml-1" v-if="user._id !== question.owner._id" @click="down(question._id)">{{question.unvote.length}} <i class="far fa-thumbs-down"></i> </button>
         <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#modalEditquestion" v-if="user._id == question.owner._id" @click="editData(question)">Edit</button>
         <button @click="deleteMyquestion(question._id)" class="btn btn-sm btn-outline-danger ml-1" v-if="user._id == question.owner._id">Delete</button>
         <br />
@@ -20,22 +20,47 @@
             <div class="card mb-3" v-for="com in question.answers" :key="com._id">
               <strong>{{com.owner.name}} said: </strong>
               <blockquote>{{com.answer}}</blockquote>
-              <a class="text-success" v-if="user._id !== com.owner._id" @click="upp(com._id)">{{com.vote.length}} Up </a>
-              <a class="text-warning" v-if="user._id !== com.owner._id" @click="downn(com._id)">{{com.unvote.length}} Down </a>
+              <a class="text-success" v-if="user._id !== com.owner._id" @click="upp(com._id)">{{com.vote.length}} <i class="far fa-thumbs-up"></i> </a>
+              <a class="text-warning" v-if="user._id !== com.owner._id" @click="downn(com._id)">{{com.unvote.length}} <i class="far fa-thumbs-down"></i> </a>
               <a href="#" class="text-danger" v-if="user._id == com.owner._id" @click="deleteAnswer(com._id)">Delete</a>
             </div>
             <div v-if="user._id">
-              <textarea class="form-control mb-3" placeholder="answer here..." v-model="answer"></textarea>
+              <wysiwyg v-model="answer" />
               <button class="btn btn-outline-success btn-sm float-right" @click="saveanswer(question._id)">answer</button>
             </div>
       </div>
     </div>
+    <!-- Modal Edit Question -->
+      <div class="modal fade" id="modalEditquestion" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+              <h4 class="modal-title" id="modelTitleId">Edit Question</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <input type="text" class="form-control mb-3" v-model="question.title" placeholder="Title" required />
+              <select v-model="category" class="form-control mb-3">
+                <option v-for="category in categories" :key="category._id" :value="category._id">{{category.name}}</option>
+              </select>
+              <wysiwyg v-model="question.description" />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" @click="sendEditQuestion(question._id, question.title, question.description)" data-dismiss="modal">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+const url = 'http://localhost:3000'
 export default {
   props: ['id'],
   name: 'listquestion',
@@ -43,18 +68,37 @@ export default {
     this.getQuestion()
   },
   computed: {
-    ...mapState(['isLogin', 'user'])
+    ...mapState(['isLogin', 'user', 'categories'])
   },
   data () {
     return {
       question: {},
-      answer: ''
+      answer: '',
+      category: ''
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      this.getQuestion()
     }
   },
   methods: {
+    ...mapActions(['editQuestion', 'deleteQuestion']),
+    deleteMyquestion (id) {
+      this.deleteQuestion(id)
+    },
+    sendEditQuestion (id, title, description) {
+      let objQuestion = {
+        id: id,
+        title: title,
+        description: description,
+        category: this.category
+      }
+      this.editQuestion(objQuestion)
+    },
     up (id) {
       axios({
-        url: `http://localhost:3000/questions/${id}/vote`,
+        url: url + `/questions/${id}/vote`,
         method: 'patch',
         headers: {
           token: localStorage.getItem('token')
@@ -67,7 +111,7 @@ export default {
     },
     down (id) {
       axios({
-        url: `http://localhost:3000/questions/${id}/unvote`,
+        url: url + `/questions/${id}/unvote`,
         method: 'patch',
         headers: {
           token: localStorage.getItem('token')
@@ -81,7 +125,7 @@ export default {
     },
     upp (id) {
       axios({
-        url: `http://localhost:3000/answers/${id}/vote`,
+        url: url + `/answers/${id}/vote`,
         method: 'patch',
         headers: {
           token: localStorage.getItem('token')
@@ -94,7 +138,7 @@ export default {
     },
     downn (id) {
       axios({
-        url: `http://localhost:3000/answers/${id}/unvote`,
+        url: url + `/answers/${id}/unvote`,
         method: 'patch',
         headers: {
           token: localStorage.getItem('token')
@@ -108,7 +152,7 @@ export default {
     },
     getQuestion () {
       axios({
-        url: `http://localhost:3000/questions/${this.id}`,
+        url: url + `/questions/${this.id}`,
         method: 'get'
       })
         .then(found => {
@@ -118,7 +162,7 @@ export default {
     },
     saveanswer (id) {
       axios({
-        url: `http://localhost:3000/answers/${id}`,
+        url: url + `/answers/${id}`,
         method: 'post',
         data: {
           answer: this.answer
@@ -135,7 +179,7 @@ export default {
     },
     deleteAnswer (id) {
       axios({
-        url: `http://localhost:3000/answers/${id}`,
+        url: url + `/answers/${id}`,
         method: 'delete',
         headers: {
           token: localStorage.getItem('token')

@@ -31,6 +31,39 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    doSearch ({ commit }, payload) {
+      axios({
+        url: url + `/questions/${payload}/search`,
+        method: 'get'
+      })
+        .then(found => {
+          commit('setQuestions', found.data)
+        })
+        .catch(() => console.log(`Failed to get data`))
+    },
+    deleteQuestion ({ dispatch }, payload) {
+      axios({
+        url: url + `/questions/${payload}`,
+        method: 'delete',
+        headers: { token: localStorage.getItem('token') }
+      })
+        .then(() => dispatch('getQuestions'))
+        .catch(() => console.log(`failed to delete`))
+    },
+    editQuestion ({ dispatch }, payload) {
+      axios({
+        url: url + `/questions/${payload.id}`,
+        method: 'put',
+        data: {
+          title: payload.title,
+          description: payload.description,
+          category: payload.category
+        },
+        headers: { token: localStorage.getItem('token') }
+      })
+        .then(() => dispatch('getQuestions'))
+        .catch(() => console.log(`failed to edit`))
+    },
     getQuestion ({ commit }, payload) {
       axios({
         url: `http://localhost:3000/questions/${payload}`,
@@ -60,7 +93,7 @@ export default new Vuex.Store({
         data: { name: payload.name, email: payload.email, password: payload.password }
       })
         .then(found => {
-          alert('teeet')
+          alert('Success')
         })
         .catch(() => { console.log(`failed to register`) })
     },

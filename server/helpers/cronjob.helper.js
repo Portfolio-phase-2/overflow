@@ -1,20 +1,16 @@
-var CronJob = require('cron').CronJob;
-var kue = require('kue')
-  , queue = kue.createQueue();
+const CronJob = require('cron').CronJob
+const sgMail = require('@sendgrid/mail')
 
-  var job = queue.create('email', {
-    title: 'welcome email for tj'
-  , to: 'tj@learnboost.com'
-  , template: 'welcome-email'
-}).save( function(err){
-   if( !err ) console.log( job.id );
-});
-
-
-new CronJob('* * * * * *', function() {
-  console.log('You will see this message every second');
-}, null, true, 'Asia/Jakarta');
-
-function sendEmail(email) {
-
+module.exports = function sendEmail(email) {
+  new CronJob('*/1 */7 * * */6', function() {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+    const msg = {
+        to: email,
+        from: 'talkasrul@gmail.com',
+        subject: 'Halooo',
+        text: 'I hope you write back',
+        html: '<p>Please read or wrire in your account tanyaDONK for help people in this world</p>',
+    }
+    sgMail.send(msg)
+  }, null, true, 'Asia/Jakarta');
 }

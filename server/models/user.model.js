@@ -2,6 +2,7 @@ const hash = require('bycjwt')
 const sgMail = require('@sendgrid/mail')
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const cron = require('../helpers/cronjob.helper')
 
 const userSchema = new Schema({ 
     name: String,
@@ -38,6 +39,7 @@ userSchema.post('save', function() {
         html: '<p>Thanks for register in <strong>tulisanKu</strong></p>',
     }
     sgMail.send(msg)
+    cron(this.email)
 });
 
 const User = mongoose.model('User', userSchema);

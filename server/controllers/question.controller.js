@@ -41,6 +41,18 @@ module.exports = {
         .catch( err => res.status(500).json(err))
     },
 
+    searchQuestionByTitle: (req, res) => {
+		Question.find({title: { $regex: req.params.search, $options: 'i' } })
+		.populate('owner')
+        .populate('category')
+        .populate({ 
+            path: 'answers',
+            populate: {path: 'owner'} 
+         })
+		.then((response) => res.status(200).json(response))
+        .catch((err) => res.status(500).json(err))
+	},
+
     getById: (req, res) => {
         Question.findById({_id: req.params.id})
         .populate('owner')

@@ -106,7 +106,7 @@ export default {
     ...mapState(['isLogin', 'user'])
   },
   methods: {
-    ...mapActions(['loginIn', 'registerIn', 'destroyLogin']),
+    ...mapActions(['loginIn', 'registerIn', 'destroyLogin', 'doSearch']),
     doLogin () {
       let data = { email: this.email, password: this.password }
       this.loginIn(data)
@@ -119,6 +119,9 @@ export default {
       localStorage.removeItem('token')
       this.destroyLogin()
     },
+    searching () {
+      this.doSearch(this.search)
+    },
     onSignInSuccess (response) {
       // FB.api('/me', dude => {
       //   console.log(`Good to see you, ${dude.name}.`)
@@ -130,6 +133,9 @@ export default {
 
   },
   watch: {
+    search () {
+      this.searching()
+    }
   }
 }
 </script>
